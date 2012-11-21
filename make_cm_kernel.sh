@@ -1,43 +1,38 @@
 #!/bin/bash
 
-if [ ! -e ./zImage ] ; then
-	echo zImage not found
-	exit 1
+if [ ! -e $PWD/zImage ] ; then
+    echo zImage not found
+    exit 1
 fi
-if [ ! -d ./system ] ; then
-	echo system not found
-	exit 1
+if [ ! -d $PWD/system ] ; then
+    echo system not found
+    exit 1
 fi
 if [ -e ../cm_update.zip ] ; then
-	rm ../cm_update.zip
+    rm ../cm_update.zip
 fi
-find -name .gitignore | xargs rm
-cd ./cm_init_rd
-../bin/ramdiskrepack
-cd ../
-mv ramdisk.cpio.gz LNX.ramdisk.cpio.gz
-./bin/mkbootimg --kernel zImage --ramdisk LNX.ramdisk.cpio.gz -o tmp
-rm ./LNX.ramdisk.cpio.gz
-./bin/blobpack tmp.blob LNX tmp
-if [ -e ./cm_update/kernel.blob ] ; then
-	rm ./cm_update/kernel.blob
+find -name .gitignore | xargs rm -fr
+$PWD/bin/mkbootfs $PWD/cm_init_rd | $PWD/bin/minigzip > $PWD/ramdisk.gz
+$PWD/bin/mkbootimg --kernel $PWD/zImage --ramdisk $PWD/ramdisk.gz -o $PWD/tmp
+if [ -e $PWD/cm_update/kernel.blob ] ; then
+    rm $PWD/cm_update/kernel.blob
 fi
-cat ./bin/blob_head ./tmp.blob > ./cm_update/kernel.blob
-if [ -d "./system" ] ; then
-	rm -fr ./cm_update/system
-	mkdir -p ./cm_update/system
-	cp -frp ./system/*	./cm_update/system/
-	mkdir -p ./cm_update/system/bin/
-	cp ./files/vold		./cm_update/system/bin/vold
-	cp ./files/ntfs-3g	./cm_update/system/bin/ntfs-3g
-	cp ./files/exfat	./cm_update/system/bin/exfat
+$PWD/bin/blobpack $PWD/cm_update/kernel.blob LNX $PWD/tmp
+if [ -d $PWD/system ] ; then
+    rm -fr $PWD/cm_update/system
+    mkdir -p $PWD/cm_update/system
+    cp -frp $PWD/system/* $PWD/cm_update/system/
+    mkdir -p $PWD/cm_update/system/bin/
+    cp $PWD/files/vold $PWD/cm_update/system/bin/vold
+    cp $PWD/files/ntfs-3g $PWD/cm_update/system/bin/ntfs-3g
+    cp $PWD/files/exfat $PWD/cm_update/system/bin/exfat
 fi
-rm ./tmp ./tmp.blob
-cd ./cm_update
+cd $PWD/cm_update
 zip -9r ../cm_update.zip ./*
 cd ../
-java -jar ./bin/SignUpdate.jar ./cm_update.zip
-mv ./signed_cm_update.zip ../cm_update.zip
-rm ./cm_update.zip
+java -jar $PWD/bin/SignUpdate.jar $PWD/cm_update.zip
+mv $PWD/signed_cm_update.zip ../cm_update.zip
+rm $PWD/cm_update.zip $PWD/tmp $PWD/ramdisk.gz $PWD/cm_update/kernel.blob
+rm -fr $PWD/cm_update/system
 cd ../
 exit 0

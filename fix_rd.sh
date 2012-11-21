@@ -2,57 +2,51 @@
 
 # creat empty directories
 if [ ! -d ./init_rd/data ] ; then
-	mkdir ./init_rd/data
+    mkdir ./init_rd/data
 fi
 
 if [ ! -d ./init_rd/dev ] ; then
-	mkdir ./init_rd/dev
+    mkdir ./init_rd/dev
 fi
 
 if [ ! -d ./init_rd/proc ] ; then
-	mkdir ./init_rd/proc
+    mkdir ./init_rd/proc
 fi
 
 if [ ! -d ./init_rd/sys ] ; then
-	mkdir ./init_rd/sys
+    mkdir ./init_rd/sys
 fi
 
 if [ ! -d ./init_rd/system ] ; then
-	mkdir ./init_rd/system
+    mkdir ./init_rd/system
 fi
 
 # cm ramdisk
-
 if [ ! -d ./cm_init_rd/data ] ; then
-	mkdir ./cm_init_rd/data
+    mkdir ./cm_init_rd/data
 fi
 
 if [ ! -d ./cm_init_rd/dev ] ; then
-	mkdir ./cm_init_rd/dev
+    mkdir ./cm_init_rd/dev
 fi
 
 if [ ! -d ./cm_init_rd/proc ] ; then
-	mkdir ./cm_init_rd/proc
+    mkdir ./cm_init_rd/proc
 fi
 
 if [ ! -d ./cm_init_rd/sys ] ; then
-	mkdir ./cm_init_rd/sys
+    mkdir ./cm_init_rd/sys
 fi
 
 if [ ! -d ./cm_init_rd/system ] ; then
-	mkdir ./cm_init_rd/system
+    mkdir ./cm_init_rd/system
 fi
 
 # end cm ramdisk
 
 if [ ! -d ./CWM-touch/tmp ] ; then
-	mkdir ./CWM-touch/tmp
+    mkdir ./CWM-touch/tmp
 fi
-
-# fix owner
-chown -R root:root ./init_rd/*
-chown -R root:root ./cm_init_rd/*
-chown -R root:root ./CWM-touch/*
 
 # fix permisions
 chmod 771 ./init_rd/data

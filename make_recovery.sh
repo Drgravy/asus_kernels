@@ -1,18 +1,16 @@
 #!/bin/bash
 
-if [ ! -e ./zImage ] ; then
-	echo zImage not found
-	exit 1
+VERSION=6.0.1.4
+
+if [ ! -e $PWD/zImage ] ; then
+    echo zImage not found
+    exit 1
 fi
-rm ../CWM-Touch.blob ../CWM-Touch.zip
-cd ./CWM-touch
-../bin/ramdiskrepack
-cd ../
-mv ramdisk.cpio.gz SOS.ramdisk.cpio.gz
-./bin/mkbootimg --kernel zImage --ramdisk SOS.ramdisk.cpio.gz -o tmp
-./bin/blobpack tmp.blob SOS tmp
-cat ./bin/blob_head ./tmp.blob > ../CWM-Touch.blob
-rm ./tmp ./tmp.blob ./SOS.ramdisk.cpio.gz
-cd ../
-zip -9 CWM-Touch_6.0.1.4.zip CWM-Touch.blob
+find -name .gitignore | xargs rm -fr
+rm ../CWM-Touch_$VERSION.zip ../CWM-Touch.blob
+$PWD/bin/mkbootfs $PWD/CWM-touch | $PWD/bin/minigzip > $PWD/ramdisk.gz
+$PWD/bin/mkbootimg --kernel $PWD/zImage --ramdisk $PWD/ramdisk.gz -o $PWD/tmp
+$PWD/bin/blobpack ../CWM-Touch.blob SOS $PWD/tmp
+zip -9j ../CWM-Touch_$VERSION.zip ../CWM-Touch.blob
+rm $PWD/tmp $PWD/ramdisk.gz
 exit 0

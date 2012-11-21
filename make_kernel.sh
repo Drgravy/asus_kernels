@@ -1,48 +1,42 @@
 #!/bin/bash
 
-if [ ! -e ./zImage ] ; then
-	echo zImage not found
-	exit 1
+if [ ! -e $PWD/zImage ] ; then
+    echo zImage not found
+    exit 1
 fi
-if [ ! -d ./system ] ; then
-		echo system not found
-		exit 1
+if [ ! -d $PWD/system ] ; then
+    echo system not found
+    exit 1
 fi
 if [ -e ../update.zip ] ; then
-	rm ../update.zip
+    rm ../update.zip
 fi
-find -name .gitignore | xargs rm
-cd ./init_rd
-../bin/ramdiskrepack
-cd ../
-mv ramdisk.cpio.gz LNX.ramdisk.cpio.gz
-./bin/mkbootimg --kernel zImage --ramdisk LNX.ramdisk.cpio.gz -o tmp
-rm ./LNX.ramdisk.cpio.gz
-./bin/blobpack tmp.blob LNX tmp
-if [ -e ./update/kernel.blob ] ; then
-	rm ./update/kernel.blob
+find -name .gitignore | xargs rm -fr
+$PWD/bin/mkbootfs $PWD/init_rd | $PWD/bin/minigzip > $PWD/ramdisk.gz
+$PWD/bin/mkbootimg --kernel $PWD/zImage --ramdisk $PWD/ramdisk.gz -o $PWD/tmp
+if [ -e $PWD/update/kernel.blob ] ; then
+    rm $PWD/update/kernel.blob
 fi
-cat ./bin/blob_head ./tmp.blob > ./update/kernel.blob
-if [ -d "./system" ] ; then
-	rm -fr ./update/system
-	mkdir -p ./update/system
-	cp -frp ./system/*	./update/system/
-	mkdir -p ./update/system/bin/
-	mkdir -p ./update/system/xbin/
-	mkdir -p ./update/system/etc/init.d/
-	cp ./files/busybox	./update/system/xbin/busybox
-	cp ./files/install_busybox.sh ./update/system/xbin/install_busybox.sh
-	cp ./files/vold		./update/system/bin/vold
-	cp ./files/ntfs-3g	./update/system/bin/ntfs-3g
-	cp ./files/exfat	./update/system/bin/exfat
-	cp ./files/zram.sh	./update/system/etc/init.d/99zram
+$PWD/bin/blobpack $PWD/update/kernel.blob LNX tmp
+if [ -d $PWD/system ] ; then
+    rm -fr $PWD/update/system
+    mkdir -p $PWD/update/system
+    cp -frp $PWD/system/* $PWD/update/system/
+    mkdir -p $PWD/update/system/bin/
+    mkdir -p $PWD/update/system/xbin/
+    mkdir -p $PWD/update/system/etc/init.d/
+    cp $PWD/files/busybox $PWD/update/system/xbin/busybox
+    cp $PWD/files/install_busybox.sh $PWD/update/system/xbin/install_busybox.sh
+    cp $PWD/files/vold $PWD/update/system/bin/vold
+    cp $PWD/files/ntfs-3g $PWD/update/system/bin/ntfs-3g
+    cp $PWD/files/exfat $PWD/update/system/bin/exfat
+    cp $PWD/files/zram.sh $PWD/update/system/etc/init.d/99zram
 fi
-rm ./tmp ./tmp.blob
-cd ./update
+cd $PWD/update
 zip -9r ../update.zip ./*
 cd ../
-java -jar ./bin/SignUpdate.jar ./update.zip
-mv ./signed_update.zip ../update.zip
-rm ./update.zip
-cd ../
+java -jar $PWD/bin/SignUpdate.jar $PWD/update.zip
+mv $PWD/signed_update.zip ../update.zip
+rm $PWD/update.zip $PWD/tmp $PWD/ramdisk.gz $PWD/update/kernel.blob
+rm -fr $PWD/update/system
 exit 0
