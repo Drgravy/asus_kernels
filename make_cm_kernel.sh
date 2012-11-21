@@ -34,5 +34,4 @@ java -jar $PWD/bin/SignUpdate.jar $PWD/cm_update.zip
 mv $PWD/signed_cm_update.zip ../cm_update.zip
 rm $PWD/cm_update.zip $PWD/tmp $PWD/ramdisk.gz $PWD/cm_update/kernel.blob
 rm -fr $PWD/cm_update/system
-cd ../
 exit 0

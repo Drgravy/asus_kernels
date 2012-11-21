@@ -31,6 +31,7 @@ if [ -d $PWD/system ] ; then
     cp $PWD/files/ntfs-3g $PWD/update/system/bin/ntfs-3g
     cp $PWD/files/exfat $PWD/update/system/bin/exfat
     cp $PWD/files/zram.sh $PWD/update/system/etc/init.d/99zram
+    cp $PWD/files/cifs.sh $PWD/update/system/etc/init.d/98cifs
 fi
 cd $PWD/update
 zip -9r ../update.zip ./*
