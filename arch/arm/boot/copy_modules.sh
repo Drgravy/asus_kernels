@@ -9,3 +9,5 @@ cp ../../../drivers/net/wireless/bcmdhd/bcmdhd.ko ./system/lib/modules/
 cp ../../../drivers/net/wireless/bcmdhd_34/bcmdhd_34.ko ./system/lib/modules/
 cp ../../../drivers/usb/serial/baseband_usb_chr.ko ./system/lib/modules/
 cp ../../../net/wireless/cfg80211.ko ./system/lib/modules/
+cp ../../../crypto/md4.ko ./system/lib/modules/
+cp ../../../fs/cifs/cifs.ko ./system/lib/modules/
