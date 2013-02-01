@@ -71,10 +71,6 @@
 #include <mach/board-cardhu-misc.h>
 #include <mach/tegra_fiq_debugger.h>
 
-#ifdef CONFIG_EEPROM_AT24C02C
-#include <linux/i2c/at24.h>
-#endif
-
 #include "board.h"
 #include "clock.h"
 #include "board-cardhu.h"
@@ -264,19 +260,6 @@ static struct i2c_board_info __initdata cardhu_i2c_bus3_board_info[] = {
 		I2C_BOARD_INFO("pn544", 0x28),
 		.platform_data = &nfc_pdata,
 		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PX0),
-	},
-};
-#endif
-
-#ifdef CONFIG_EEPROM_AT24C02C
-static struct at24_platform_data at24c02c = {
-	.byte_len = SZ_2K/8,
-	.page_size = 8,
-};
-static struct i2c_board_info __initdata cardhu_i2c_eeprom_board_info[] = {
-	{
-		I2C_BOARD_INFO("at24",0x50),
-		.platform_data = &at24c02c,
 	},
 };
 #endif
@@ -531,14 +514,6 @@ static void cardhu_i2c_init(void)
 	//i2c_register_board_info(4, &cardhu_codec_aic326x_info, 1);
 
 	i2c_register_board_info(1, cardhu_i2c_asuspec_info, ARRAY_SIZE(cardhu_i2c_asuspec_info));
-#ifdef CONFIG_EEPROM_AT24C02C
-	i2c_register_board_info(4, cardhu_i2c_eeprom_board_info, 1);
-#endif
-
-	if(project_info != TEGRA3_PROJECT_ME301T)
-	{
-		i2c_register_board_info(1, cardhu_i2c_asuspec_info, ARRAY_SIZE(cardhu_i2c_asuspec_info));
-	}
 	if(project_info == TEGRA3_PROJECT_TF201 || project_info == TEGRA3_PROJECT_TF300TG ||
 		project_info == TEGRA3_PROJECT_TF700T || project_info == TEGRA3_PROJECT_TF300TL)
 		i2c_register_board_info(4, &rt5631_board_info, 1);
